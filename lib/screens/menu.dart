@@ -10,9 +10,22 @@ class MyHomePage extends StatelessWidget {
   final String kelas = "PBP A";
 
   final List<ItemHomepage> items = [
-    ItemHomepage("View Projects", Icons.folder, const Color.fromARGB(255, 9, 83, 143)),
-    ItemHomepage("Add Project", Icons.add_circle, const Color.fromARGB(255, 7, 121, 34)),
-    ItemHomepage("Logout", Icons.logout, const Color.fromARGB(255, 176, 22, 11)),
+    ItemHomepage(
+      "View Projects",
+      Icons.folder,
+      const Color.fromARGB(255, 9, 83, 143),
+    ),
+    ItemHomepage(
+      "Add Project",
+      Icons.add_circle,
+      const Color.fromARGB(255, 7, 121, 34),
+    ),
+    ItemHomepage("Add Education", Icons.school_outlined, Colors.indigo),
+    ItemHomepage(
+      "Logout",
+      Icons.logout,
+      const Color.fromARGB(255, 176, 22, 11),
+    ),
   ];
 
   @override
@@ -29,51 +42,61 @@ class MyHomePage extends StatelessWidget {
       drawer: const LeftDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Horizontal row showing 3 InfoCards.
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                InfoCard(title: 'NPM', content: npm),
-                InfoCard(title: 'Name', content: nama),
-                InfoCard(title: 'Class', content: kelas),
-              ],
-            ),
-
-            const SizedBox(height: 16.0),
-
-            // Greeting and 3-column action grid.
-            Center(
-              child: Column(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Horizontal row showing 3 InfoCards.
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 16.0),
-                    child: Text(
-                      'Welcome to MyPortfolio Mobile!',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18.0,
-                      ),
-                    ),
+                  Expanded(
+                    child: InfoCard(title: 'NPM', content: npm),
                   ),
-
-                  GridView.count(
-                    primary: true,
-                    padding: const EdgeInsets.all(20),
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    crossAxisCount: 3,
-                    shrinkWrap: true,
-                    children: items.map((ItemHomepage item) {
-                      return ItemCard(item);
-                    }).toList(),
+                  Expanded(
+                    child: InfoCard(title: 'Name', content: nama),
+                  ),
+                  Expanded(
+                    child: InfoCard(title: 'Class', content: kelas),
                   ),
                 ],
               ),
-            ),
-          ],
+
+              const SizedBox(height: 16.0),
+
+              // Greeting and 3-column action grid.
+              Center(
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 16.0),
+                      child: Text(
+                        'Welcome to MyPortfolio Mobile!',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.0,
+                        ),
+                      ),
+                    ),
+
+                    GridView.count(
+                      primary: false,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(20),
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      crossAxisCount: 3,
+                      mainAxisExtent: 120,
+                      shrinkWrap: true,
+                      children: items.map((ItemHomepage item) {
+                        return ItemCard(item);
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -92,7 +115,6 @@ class InfoCard extends StatelessWidget {
     return Card(
       elevation: 2.0,
       child: Container(
-        width: MediaQuery.of(context).size.width / 3.5,
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [

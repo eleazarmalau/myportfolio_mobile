@@ -1,33 +1,15 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
 import 'package:myportofolio_mobile/main.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 
+import 'test_helpers.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  setUpAll(() async {
-    // Use the app's Roboto font instead of the test runner's wide Ahem glyphs.
-    final configFile = File('.dart_tool/package_config.json');
-    final config = jsonDecode(await configFile.readAsString()) as Map;
-    final flutter = (config['packages'] as List).cast<Map>().singleWhere(
-      (package) => package['name'] == 'flutter',
-    );
-    final flutterRoot = configFile.uri.resolve('${flutter['rootUri']}/');
-    final loader = FontLoader('Roboto');
-    for (final name in ['Roboto-Regular.ttf', 'Roboto-Bold.ttf']) {
-      final font = File.fromUri(
-        flutterRoot.resolve('../../bin/cache/artifacts/material_fonts/$name'),
-      );
-      loader.addFont(font.readAsBytes().then(ByteData.sublistView));
-    }
-    await loader.load();
-  });
+  setUpAll(loadAppFonts);
 
   testWidgets('Home Add Project opens the form and supports back navigation', (
     WidgetTester tester,
