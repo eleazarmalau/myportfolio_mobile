@@ -1,3 +1,43 @@
+# MyPortfolio Mobile
+
+Aplikasi portofolio Flutter untuk PBP. Tutorial 09 menyediakan form Add Project;
+Assignment 8 menambahkan form **Add Education** dengan navigasi, validasi, dan
+dialog ringkasan. Data pada tugas ini hanya ditampilkan dalam dialog.
+
+## Menjalankan proyek
+
+Lingkungan pengerjaan: Flutter 3.47.9 dan Dart 3.13.7. Proyek menggunakan
+`material_ui` sesuai catatan import pada Tutorial 09.
+
+```sh
+flutter pub get
+flutter run -d chrome
+```
+
+Untuk perangkat Android/iOS yang sudah dikonfigurasi, jalankan `flutter devices`,
+kemudian `flutter run -d <device-id>`.
+
+```sh
+flutter analyze
+flutter test
+```
+
+Struktur utama:
+
+```text
+lib/
+  main.dart
+  screens/
+    menu.dart
+    project_form.dart
+    education_form.dart
+  widgets/
+    left_drawer.dart
+    project_card.dart
+```
+
+Jawaban dari tugas sebelumnya dipertahankan di bawah ini.
+
 # Assignment 6
 
 ### Progres:
@@ -81,4 +121,135 @@ Hot reload tidak cukup dalam kondisi berikut:
 - Perubahan struktur tipe yang tidak didukung hot reload: misalnya mengubah enum menjadi class atau mengubah jumlah parameter generic; gunakan hot restart.
 - Perubahan kode native atau konfigurasi build platform: misalnya kode Kotlin/Java di Android atau Swift/Objective-C di iOS; lakukan full restart agar perubahan dibangun ulang.
 
-Jika hot reload gagal karena kesalahan sintaks, kesalahan tersebut perlu diperbaiki terlebih dahulu; restart tidak memperbaiki kode yang tidak bisa dikompilasi. 
+Jika hot reload gagal karena kesalahan sintaks, kesalahan tersebut perlu diperbaiki terlebih dahulu; restart tidak memperbaiki kode yang tidak bisa dikompilasi.
+
+### Assignment 8
+
+1. **Perbedaan `Navigator.push()`, `Navigator.pushReplacement()`, dan `Navigator.pop()`.**
+
+   `push()` menambahkan halaman ke atas stack navigasi sehingga halaman sebelumnya
+   masih tersedia. Kartu **Add Education** menggunakan `Navigator.push()` dengan
+   `MaterialPageRoute` untuk membuka `EducationFormPage`; tombol Back sistem dapat
+   mengembalikan pengguna ke Home. `pushReplacement()` mengganti halaman teratas,
+   sehingga halaman yang diganti tidak menjadi tujuan Back berikutnya. Drawer
+   mengikuti pola Tutorial 09: opsi Home mengganti halaman form dengan
+   `MyHomePage` menggunakan `pushReplacement()`. Cara ini juga menyediakan jalan
+   kembali ketika aplikasi dijalankan di Chrome. `pop()` menutup route teratas;
+   tombol OK menggunakan `Navigator.pop(context)` untuk menutup dialog dan
+   kembali ke form tanpa menghapus input.
+
+2. **Konsistensi `Scaffold`, `AppBar`, `Drawer`, dan tema.**
+
+   `Scaffold` menyediakan kerangka halaman, `AppBar` menampilkan judul, dan
+   `Drawer` menyediakan navigasi yang sama pada Home, Add Project, dan Add
+   Education. Ketiganya memakai komponen `LeftDrawer` yang sama, sehingga opsi
+   Home dan Add Project tetap tersedia bersama opsi baru Add Education. Warna
+   `Theme.of(context).colorScheme.primary` dipakai pada AppBar Home dan Add
+   Education, serta tombol Save Education. Skema warna tersebut berasal dari
+   seed indigo di `main.dart`; teks dan ikon AppBar berwarna putih.
+
+3. **Alasan memilih layout form serta fungsi jarak dan scrolling.**
+
+   Form menggunakan `Column` agar field berurutan dari judul pendidikan hingga
+   tahun selesai. `Padding` memberi jarak 16 piksel di tepi isi dan antarfield;
+   `Align` menempatkan tombol Save di tengah. `SingleChildScrollView` membuat
+   seluruh field dan tombol Save tetap dapat dijangkau ketika tinggi layar
+   terbatas. Saat keyboard terbuka, `Scaffold` menyesuaikan ruang body dan form
+   dapat digulir di ruang yang tersisa. `SafeArea` menjaga isi dari area sistem.
+   Home juga dibuat dapat digulir agar penambahan kartu Education tetap dapat
+   diakses pada layar ponsel.
+
+4. **Peran `GlobalKey<FormState>`, `validator`, dan `validate()`.**
+
+   `GlobalKey<FormState>` dipasang pada `Form` agar tombol Save dapat mengakses
+   statusnya. Setiap `validator` mengembalikan pesan kesalahan atau `null` jika
+   nilainya valid. `_formKey.currentState!.validate()` menjalankan semua
+   validator dan menampilkan pesan di field yang bermasalah. Dialog baru
+   ditampilkan jika hasilnya `true`. Misalnya, nama institusi yang hanya berisi
+   spasi ditolak setelah `trim()`, dan tahun selesai 2024 ditolak jika tahun
+   mulai 2025. `TextInputType.number` hanya memilih jenis keyboard; nilai dari
+   paste atau keyboard fisik masih dapat berupa `2025.5` atau `abc`, sehingga
+   parsing dan validasi tetap diperlukan. Keyboard URL juga tidak menjamin
+   sebuah URL memiliki skema HTTP/HTTPS dan host yang valid.
+
+#### Implementasi dan aturan model
+
+Section Education dipilih karena sudah dipakai pada portofolio Django. Field
+diambil dari model `Education` pada `main/models.py` di proyek Django dan aturan
+URL HTTP/HTTPS dari `EducationSerializer` di `main/serializers.py`.
+
+| Field model | Input Flutter | Validasi |
+| --- | --- | --- |
+| `title` | TextFormField | Wajib, bukan hanya spasi, maksimal 255 karakter. |
+| `institution` | TextFormField | Wajib, bukan hanya spasi, maksimal 255 karakter. |
+| `major` | TextFormField | Wajib, bukan hanya spasi, maksimal 255 karakter. |
+| `description` | TextFormField multiline | Wajib, bukan hanya spasi. |
+| `thumbnail` | TextFormField dengan keyboard URL | Opsional, maksimal 500 karakter; jika diisi harus berupa URL HTTP/HTTPS yang valid. |
+| `start_year` | TextFormField dengan keyboard angka | Wajib berupa bilangan bulat 0–32767, sesuai PositiveSmallIntegerField. |
+| `end_year` | TextFormField dengan keyboard angka | Opsional; jika diisi harus berupa bilangan bulat 0–32767 dan tidak mendahului tahun mulai. |
+
+Field berupa tahun, bukan tanggal lengkap, sehingga digunakan input angka,
+bukan date picker. UUID, timestamp, dan relasi star tidak menjadi input pada
+form tambah. Thumbnail kosong ditampilkan sebagai `Not provided`, sedangkan
+tahun selesai kosong ditampilkan sebagai `Ongoing` pada ringkasan.
+
+#### Checklist dan pengujian
+
+- [x] Form baru dalam `lib/screens/education_form.dart` memakai StatefulWidget,
+  Form, dan GlobalKey<FormState>.
+- [x] Tujuh input mengikuti field Education dan memiliki validasi yang sesuai.
+- [x] AppBar mengikuti tema Home; seluruh form dan Save dapat digulir.
+- [x] Kartu Add Education membuka form menggunakan `Navigator.push()`.
+- [x] Drawer bersama menyediakan Home, Add Project, dan Add Education.
+- [x] Save menampilkan error pada field invalid dan ringkasan semua nilai pada
+  AlertDialog jika valid; OK kembali ke form.
+- [x] Tes otomatis mencakup navigasi kartu dan drawer, Back/Home, nilai kosong
+  dan spasi, batas panjang, URL, nilai dan urutan tahun, field opsional, ringkasan,
+  serta viewport 360×640 dengan simulasi keyboard terbuka.
+- [x] `flutter analyze` bersih dan `flutter test` meluluskan 12 tes.
+- [x] `flutter build web --no-pub` berhasil. Pemeriksaan Chrome headless berhasil
+  membuka form dari kartu dan drawer, lalu kembali melalui opsi Home.
+- [x] Repository Assignment 7 terkonfirmasi berstatus publik di GitHub.
+- [x] Jawaban refleksi dan AI disclosure ditambahkan tanpa menghapus jawaban lama.
+- [x] Commit dan push hasil akhir ke repository Assignment 7.
+
+Untuk pengecekan interaktif, buka aplikasi melalui `flutter run -d chrome`,
+pilih Add Education dari kartu dan dari drawer, lalu pilih Home untuk kembali.
+Coba Save dengan field wajib kosong, lalu lengkapi dan periksa semua nilai dalam
+dialog. Pengujian ukuran ponsel dilakukan lewat widget test; pengujian pada
+perangkat ponsel fisik belum dilakukan.
+
+#### Progres Assignment 8
+
+- Memeriksa checklist PDF dan model Education yang sudah ada.
+- Menambahkan EducationFormPage dengan tujuh input, validasi, dan ringkasan.
+- Menghubungkan kartu dan drawer serta menyesuaikan scrolling Home untuk layar
+  sempit.
+- Menambahkan tes perilaku form dan navigasi, lalu melengkapi dokumentasi.
+- Menjalankan analisis, 12 tes otomatis, build web, dan pemeriksaan navigasi
+  di Chrome headless; tampilan form juga diperiksa pada viewport ponsel.
+
+#### AI disclosure
+
+**Tool:** OpenAI Codex. AI membantu membaca PDF tugas, meninjau model Education
+di proyek Django, menulis form Flutter, menambahkan navigasi, menyesuaikan layout
+untuk layar sempit, membuat dan menjalankan tes, serta menyusun bagian Assignment
+8 pada README ini.
+
+**Strategi prompt:** persyaratan diberikan melalui PDF, disertai permintaan untuk
+mengerjakan bagian “This Assignment’s Target” sesuai checklist. Konteks sebelumnya
+juga menekankan agar perubahan mengikuti Tutorial 09. Karena itu, implementasi
+menggunakan pola navigasi tutorial dan field Education yang benar-benar tersedia,
+bukan membuat field model baru berdasarkan dugaan.
+
+**Batasan dan evaluasi:** bantuan AI pada tutorial sebelumnya sempat menambahkan
+perubahan yang tidak ada pada contoh, lalu dikoreksi setelah PDF dibandingkan
+langsung. Pada tugas ini, sumber aturan field diperiksa dari model dan serializer.
+Jenis keyboard tidak diperlakukan sebagai pengganti validator. Tes widget memakai
+font Roboto dari SDK agar ukuran teks mendekati aplikasi, karena font Ahem bawaan
+tes lebih lebar. Tes otomatis tidak menggantikan pemeriksaan pada semua perangkat.
+Tidak ada klaim bahwa pengguna telah melakukan perbaikan manual atau pengujian
+ponsel fisik yang belum tercatat.
+
+Riwayat prompt dan bantuan yang relevan dicatat di
+[log AI Assignment 8](docs/assignment-8-ai-log.md).
