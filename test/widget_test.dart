@@ -1,30 +1,74 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+import 'dart:convert';
+import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:myportofolio_mobile/screens/project_form.dart';
 import 'package:myportofolio_mobile/main.dart';
+import 'package:myportofolio_mobile/screens/menu.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() async {
+    // Use the app's Roboto font instead of the test runner's wide Ahem glyphs.
+    final configFile = File('.dart_tool/package_config.json');
+    final config = jsonDecode(await configFile.readAsString()) as Map;
+    final flutter = (config['packages'] as List).cast<Map>().singleWhere(
+      (package) => package['name'] == 'flutter',
+    );
+    final flutterRoot = configFile.uri.resolve('${flutter['rootUri']}/');
+    final loader = FontLoader('Roboto');
+    for (final name in ['Roboto-Regular.ttf', 'Roboto-Bold.ttf']) {
+      final font = File.fromUri(
+        flutterRoot.resolve('../../bin/cache/artifacts/material_fonts/$name'),
+      );
+      loader.addFont(font.readAsBytes().then(ByteData.sublistView));
+    }
+    await loader.load();
+  });
+
+  testWidgets('Home Add Project opens the form and supports back navigation', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const MyApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    await tester.tap(find.text('Add Project'));
+    await tester.pumpAndSettle();
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    expect(find.byType(ProjectFormPage), findsOneWidget);
+    expect(find.text('Add Project Form'), findsOneWidget);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    Navigator.of(tester.element(find.byType(ProjectFormPage))).pop();
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MyHomePage), findsOneWidget);
+    expect(find.byType(ProjectFormPage), findsNothing);
+  });
+
+  testWidgets('Drawer Add Project opens the form and Home returns to menu', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MyApp());
+
+    await tester.tap(find.byTooltip('Open navigation menu'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ListTile, 'Add Project'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ProjectFormPage), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Open navigation menu'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ListTile, 'Home'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MyHomePage), findsOneWidget);
+    expect(find.byType(ProjectFormPage), findsNothing);
+    expect(
+      tester.state<ScaffoldState>(find.byType(Scaffold)).isDrawerOpen,
+      isFalse,
+    );
   });
 }
