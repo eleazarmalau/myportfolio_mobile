@@ -10,22 +10,10 @@ class MyHomePage extends StatelessWidget {
   final String kelas = "PBP A";
 
   final List<ItemHomepage> items = [
-    ItemHomepage(
-      "View Projects",
-      Icons.folder,
-      const Color.fromARGB(255, 9, 83, 143),
-    ),
-    ItemHomepage(
-      "Add Project",
-      Icons.add_circle,
-      const Color.fromARGB(255, 7, 121, 34),
-    ),
-    ItemHomepage("Add Education", Icons.school_outlined, Colors.indigo),
-    ItemHomepage(
-      "Logout",
-      Icons.logout,
-      const Color.fromARGB(255, 176, 22, 11),
-    ),
+    ItemHomepage("View Projects", Icons.folder, const Color(0xFFD0E4F5)),
+    ItemHomepage("Add Project", Icons.add_circle, const Color(0xFFFDDBDB)),
+    ItemHomepage("Add Education", Icons.school_outlined, const Color(0xFFF7CAC9)),
+    ItemHomepage("Logout", Icons.logout, const Color(0xFFB3CEE5)),
   ];
 
   @override
@@ -36,7 +24,7 @@ class MyHomePage extends StatelessWidget {
           'MyPortfolio',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: const Color(0xFF93A9D1),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       drawer: const LeftDrawer(),

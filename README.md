@@ -38,7 +38,7 @@ lib/
 
 Jawaban dari tugas sebelumnya dipertahankan di bawah ini.
 
-# Assignment 6
+## Assignment 7
 
 ### Progres:
 
@@ -48,14 +48,14 @@ Yang dikerjakan:
 
 - Kerjaan sebelumnya sudah dikerjain di tutorial jadi buat tugas tinggal ganti color buat buttonnya 
 
-## Questions
+### Questions
 
-### 1. Explain what a widget tree is in Flutter and how parent-child relationships work between widgets.
+#### 1. Explain what a widget tree is in Flutter and how parent-child relationships work between widgets.
 
 Widget tree adalah susunan widget yang bersifat hierarki dan membentuk tampilan aplikai Flutter. Widget yang membungkus widget lain disebut parent. Widget yang ada dalam widget lain disebut child. Parent mengatur penempatan dan memberikan batasan ukuran kepada child, lalu child menentukan ukurannya sesuai batasan yang udah dibuat tadi. Widget seperti padding menerima satu widget melalui properti child, sedangkan row dan column menerima beberapa widget melalui children
 
 
-### 2. List all the widgets you used in this project and explain each of their functions.
+#### 2. List all the widgets you used in this project and explain each of their functions.
 
 Berikut widget yang dibuat atau dipakai secara langsung di kode ini
 
@@ -86,17 +86,17 @@ Selain itu, kode mengakses widget pendukung melalui `Theme.of(context)` untuk me
 
 `ItemHomepage` adalah kelas model data untuk menyimpan nama, ikon, dan warna menu, bukan widget. `ThemeData`, `ColorScheme`, `TextStyle`, `EdgeInsets`, dan `BorderRadius` juga merupakan objek konfigurasi, bukan widget.
 
-### 3. What is the purpose of the MaterialApp widget? Explain why this widget is commonly used as the root widget in Flutter applications.
+#### 3. What is the purpose of the MaterialApp widget? Explain why this widget is commonly used as the root widget in Flutter applications.
 
 MaterialApp menyediakan konfigurasi tingkat aplikasi untuk antarmuka berbasis Material Design, seperti tema, navigasi, dan lokalisasi. Widget ini biasanya dipasang di dekat root widget tree agar halaman-halaman di bawahnya memperoleh konfigurasi yang konsisten tanpa harus mengatur yang lain satu per satu.
 
-### 4. Explain the difference between StatelessWidget and StatefulWidget. When should you choose StatelessWidget, and when is StatefulWidget necessary?
+#### 4. Explain the difference between StatelessWidget and StatefulWidget. When should you choose StatelessWidget, and when is StatefulWidget necessary?
 
 StatelessWidget digunakan ketika widget tidak perlu menyimpan state internal yang dapat berubah. Tampilannya ditentukan oleh konfigurasi dari parent dan data yang diperoleh melalui context. Widget ini tetap dapat dibangun ulang ketika parent memberikan konfigurasi baru atau data warisan seperti berubahnya tema. Jadi, stateless bukan berarti tampilannya tidak bisa berubah sama sekali.
 
 Sementara itu, StatefulWdiget digunakan ketika widget perlu menyimpan state yang berubah selama pengguna berinteraksi, misalnya nilai counter, status pilihan, atau status pemuatan data. Objek widget-nya tetap immutable, sedangkan state yang berubah disimpan dalam objek State terpisah. Pemanggilan setState() memberi tahu Flutter kalau perubahan state perlu ditampilkan dengan menjalankan proses build kembali.
 
-### 5. What is BuildContext and why is it crucial in Flutter? How is it used inside the build method?
+#### 5. What is BuildContext and why is it crucial in Flutter? How is it used inside the build method?
 
 BuildContext adalah objek yang mewakili lokasi sebuah widget dalam widget tree. Context penting karena Flutter menggunakannya untuk mencari data atau layanan dari ancestor, yaitu widget yang berada di atas lokasi tersebut. Karena itu, context yang dipakai harus berada di bawah penyedia data atau layanan yang ingin diakses.
 
@@ -108,7 +108,7 @@ Pada metode Widget build(BuildContext context), Flutter memberikan context milik
 
 Context milik suatu metode build() tidak sama dengan context milik child yang dikembalikannya. Misalnya, ketika build() membuat widget penyedia tema baru, context milik metode itu sendiri belum berada di bawah penyedia tema baru tersebut.
 
-### 6. Explain the concept of hot reload in Flutter and how it differs from hot restart. When can you not rely on hot reload and must instead perform a hot restart or full restart?
+#### 6. Explain the concept of hot reload in Flutter and how it differs from hot restart. When can you not rely on hot reload and must instead perform a hot restart or full restart?
 
 Hot reload memasukkan perubahan kode Dart ke aplikasi yang sedang berjalan dan membangun ulang widget tree sambil mempertahankan state. Fitur ini cocok untuk mencoba perubahan tampilan seperti teks, padding, atau warna yang diterapkan saat build. Hot reload tidak menjalankan ulang main() dan initState().
 
@@ -123,101 +123,27 @@ Hot reload tidak cukup dalam kondisi berikut:
 
 Jika hot reload gagal karena kesalahan sintaks, kesalahan tersebut perlu diperbaiki terlebih dahulu; restart tidak memperbaiki kode yang tidak bisa dikompilasi.
 
-### Assignment 8
+## Assignment 8
 
-1. **Perbedaan `Navigator.push()`, `Navigator.pushReplacement()`, dan `Navigator.pop()`.**
+### Questions 
 
-   `push()` menambahkan halaman ke atas stack navigasi sehingga halaman sebelumnya
-   masih tersedia. Kartu **Add Education** menggunakan `Navigator.push()` dengan
-   `MaterialPageRoute` untuk membuka `EducationFormPage`; tombol Back sistem dapat
-   mengembalikan pengguna ke Home. `pushReplacement()` mengganti halaman teratas,
-   sehingga halaman yang diganti tidak menjadi tujuan Back berikutnya. Drawer
-   mengikuti pola Tutorial 09: opsi Home mengganti halaman form dengan
-   `MyHomePage` menggunakan `pushReplacement()`. Cara ini juga menyediakan jalan
-   kembali ketika aplikasi dijalankan di Chrome. `pop()` menutup route teratas;
-   tombol OK menggunakan `Navigator.pop(context)` untuk menutup dialog dan
-   kembali ke form tanpa menghapus input.
+#### 1. Explain the differences between Navigator.push(), Navigator.pushReplacement(), and Navigator.pop(). Which method opens the form from the action card? Explain how the Home option in the drawer takes the user back to the home screen.
 
-2. **Konsistensi `Scaffold`, `AppBar`, `Drawer`, dan tema.**
+Navigator.push() menambahkan elemen ke atas stack navigasi sehingga halaman sebelumnya masih tersedia. Navigator.pushReplacement() mengganti halaman teratas, sehingga halaman yang diganti tidak menjadi tujuan Back berikutnya. Navigator.pop() menutup route teratasnya dan kemudian menampilkan route sebelumnya. Action card Add Project dan Add Education menggunakan Navigator.push() untuk membuka ProjectFormPage dan EducationFormPage melalui MaterialPageRoute. Dengan demikian, halaman Home tetap berada di bawah halaman form. Sementara itu, opsi Home pada drawer di left_drawer.dart menggunakan Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => MyHomePage()),);
+Ketika dipilih, halaman aktif diganti dengan instance baru MyHomePage. Jadi, pengguna kembali melihat Home karena aplikasi membuat halaman Home baru, bukan melakukan pop() ke Home sebelumnya. Jika form awalnya dibuka dari action card, Home yang lama tetap berada di bawahnya dalam tumpukan navigasi.
 
-   `Scaffold` menyediakan kerangka halaman, `AppBar` menampilkan judul, dan
-   `Drawer` menyediakan navigasi yang sama pada Home, Add Project, dan Add
-   Education. Ketiganya memakai komponen `LeftDrawer` yang sama, sehingga opsi
-   Home dan Add Project tetap tersedia bersama opsi baru Add Education. Warna
-   `Theme.of(context).colorScheme.primary` dipakai pada AppBar Home dan Add
-   Education, serta tombol Save Education. Skema warna tersebut berasal dari
-   seed indigo di `main.dart`; teks dan ikon AppBar berwarna putih.
+#### 2. How does the arrangement of Scaffold, AppBar, and Drawer keep the page structure consistent? Give one example of the portfolio theme colors being used on more than one page.
 
-3. **Alasan memilih layout form serta fungsi jarak dan scrolling.**
+Konsistensi Scaffold, AppBar, Drawer, dan tema.
+Scaffold menyediakan kerangka halaman, AppBar menampilkan judul, dan Drawer menyediakan navigasi yang sama pada Home, Add Project, dan Add Education. Ketiganya memakai komponen LeftDrawer yang sama, sehingga opsi Home dan Add Project tetap tersedia bersama opsi baru Add Education. Warna Theme.of(context).colorScheme.primary dipakai pada AppBar Home dan Add Education, serta tombol Save Education. Skema warna tersebut berasal dari seed indigo di main.dart; teks dan ikon AppBar berwarna putih.
 
-   Form menggunakan `Column` agar field berurutan dari judul pendidikan hingga
-   tahun selesai. `Padding` memberi jarak 16 piksel di tepi isi dan antarfield;
-   `Align` menempatkan tombol Save di tengah. `SingleChildScrollView` membuat
-   seluruh field dan tombol Save tetap dapat dijangkau ketika tinggi layar
-   terbatas. Saat keyboard terbuka, `Scaffold` menyesuaikan ruang body dan form
-   dapat digulir di ruang yang tersisa. `SafeArea` menjaga isi dari area sistem.
-   Home juga dibuat dapat digulir agar penambahan kartu Education tetap dapat
-   diakses pada layar ponsel.
+#### 3. Why was this layout chosen for the form? Explain what the spacing and scrolling widgets do when screen space is limited.
 
-4. **Peran `GlobalKey<FormState>`, `validator`, dan `validate()`.**
+Form menggunakan Column agar field berurutan dari judul pendidikan hingga tahun selesai. Padding memberi jarak 16 piksel di tepi isi dan antarfield; Align menempatkan tombol Save di tengah. SingleChildScrollView membuat seluruh field dan tombol Save tetap dapat dijangkau ketika tinggi layar terbatas. Saat keyboard terbuka, Scaffold menyesuaikan ruang body dan form dapat digulir di ruang yang tersisa. SafeArea menjaga isi dari area sistem. Home juga dibuat dapat digulir agar penambahan kartu Education tetap dapat diakses pada layar ponsel.
 
-   `GlobalKey<FormState>` dipasang pada `Form` agar tombol Save dapat mengakses
-   statusnya. Setiap `validator` mengembalikan pesan kesalahan atau `null` jika
-   nilainya valid. `_formKey.currentState!.validate()` menjalankan semua
-   validator dan menampilkan pesan di field yang bermasalah. Dialog baru
-   ditampilkan jika hasilnya `true`. Misalnya, nama institusi yang hanya berisi
-   spasi ditolak setelah `trim()`, dan tahun selesai 2024 ditolak jika tahun
-   mulai 2025. `TextInputType.number` hanya memilih jenis keyboard; nilai dari
-   paste atau keyboard fisik masih dapat berupa `2025.5` atau `abc`, sehingga
-   parsing dan validasi tetap diperlukan. Keyboard URL juga tidak menjamin
-   sebuah URL memiliki skema HTTP/HTTPS dan host yang valid.
+#### 4.What roles do GlobalKey<FormState>, validator, and validate() play when Save is pressed? Give one example of a value the form rejects and explain why choosing an input widget or keyboard type alone is insufficient.
 
-#### Implementasi dan aturan model
-
-Section Education dipilih karena sudah dipakai pada portofolio Django. Field
-diambil dari model `Education` pada `main/models.py` di proyek Django dan aturan
-URL HTTP/HTTPS dari `EducationSerializer` di `main/serializers.py`.
-
-| Field model | Input Flutter | Validasi |
-| --- | --- | --- |
-| `title` | TextFormField | Wajib, bukan hanya spasi, maksimal 255 karakter. |
-| `institution` | TextFormField | Wajib, bukan hanya spasi, maksimal 255 karakter. |
-| `major` | TextFormField | Wajib, bukan hanya spasi, maksimal 255 karakter. |
-| `description` | TextFormField multiline | Wajib, bukan hanya spasi. |
-| `thumbnail` | TextFormField dengan keyboard URL | Opsional, maksimal 500 karakter; jika diisi harus berupa URL HTTP/HTTPS yang valid. |
-| `start_year` | TextFormField dengan keyboard angka | Wajib berupa bilangan bulat 0–32767, sesuai PositiveSmallIntegerField. |
-| `end_year` | TextFormField dengan keyboard angka | Opsional; jika diisi harus berupa bilangan bulat 0–32767 dan tidak mendahului tahun mulai. |
-
-Field berupa tahun, bukan tanggal lengkap, sehingga digunakan input angka,
-bukan date picker. UUID, timestamp, dan relasi star tidak menjadi input pada
-form tambah. Thumbnail kosong ditampilkan sebagai `Not provided`, sedangkan
-tahun selesai kosong ditampilkan sebagai `Ongoing` pada ringkasan.
-
-#### Checklist dan pengujian
-
-- [x] Form baru dalam `lib/screens/education_form.dart` memakai StatefulWidget,
-  Form, dan GlobalKey<FormState>.
-- [x] Tujuh input mengikuti field Education dan memiliki validasi yang sesuai.
-- [x] AppBar mengikuti tema Home; seluruh form dan Save dapat digulir.
-- [x] Kartu Add Education membuka form menggunakan `Navigator.push()`.
-- [x] Drawer bersama menyediakan Home, Add Project, dan Add Education.
-- [x] Save menampilkan error pada field invalid dan ringkasan semua nilai pada
-  AlertDialog jika valid; OK kembali ke form.
-- [x] Tes otomatis mencakup navigasi kartu dan drawer, Back/Home, nilai kosong
-  dan spasi, batas panjang, URL, nilai dan urutan tahun, field opsional, ringkasan,
-  serta viewport 360×640 dengan simulasi keyboard terbuka.
-- [x] `flutter analyze` bersih dan `flutter test` meluluskan 12 tes.
-- [x] `flutter build web --no-pub` berhasil. Pemeriksaan Chrome headless berhasil
-  membuka form dari kartu dan drawer, lalu kembali melalui opsi Home.
-- [x] Repository Assignment 7 terkonfirmasi berstatus publik di GitHub.
-- [x] Jawaban refleksi dan AI disclosure ditambahkan tanpa menghapus jawaban lama.
-- [x] Commit dan push hasil akhir ke repository Assignment 7.
-
-Untuk pengecekan interaktif, buka aplikasi melalui `flutter run -d chrome`,
-pilih Add Education dari kartu dan dari drawer, lalu pilih Home untuk kembali.
-Coba Save dengan field wajib kosong, lalu lengkapi dan periksa semua nilai dalam
-dialog. Pengujian ukuran ponsel dilakukan lewat widget test; pengujian pada
-perangkat ponsel fisik belum dilakukan.
+GlobalKey<FormState> dipasang pada Form agar tombol Save dapat mengakses statusnya. Setiap validator mengembalikan pesan kesalahan atau null jika nilainya valid. _formKey.currentState!.validate() menjalankan semua validator dan menampilkan pesan di field yang bermasalah. Dialog baru ditampilkan jika hasilnya true. Misalnya, nama institusi yang hanya berisi spasi ditolak setelah trim(), dan tahun selesai 2024 ditolak jika tahun mulai 2025. TextInputType.number hanya memilih jenis keyboard; nilai dari paste atau keyboard fisik masih dapat berupa 2025.5 atau abc, sehingga parsing dan validasi tetap diperlukan. Keyboard URL juga tidak menjamin sebuah URL memiliki skema HTTP/HTTPS dan host yang valid.
 
 #### Progres Assignment 8
 
