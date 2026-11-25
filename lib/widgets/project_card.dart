@@ -1,7 +1,11 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:myportofolio_mobile/screens/education_form.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
+import 'package:myportofolio_mobile/screens/projects_list_screen.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
+import 'package:myportofolio_mobile/widgets/auth_guard.dart';
+import 'package:provider/provider.dart';
 
 class ItemCard extends StatelessWidget {
   final ItemHomepage item;
@@ -14,14 +18,48 @@ class ItemCard extends StatelessWidget {
       color: item.color,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
-        onTap: () {
+        onTap: () async {
+          if (item.name == "Logout") {
+            final authState = context.read<AuthState>();
+            final wasLoggedIn = authState.isLoggedIn;
+            if (wasLoggedIn) {
+              await authState.logout();
+            }
+            if (!context.mounted) return;
+
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text(
+                    wasLoggedIn
+                        ? 'Logged out successfully.'
+                        : 'You are not logged in.',
+                  ),
+                ),
+              );
+            return;
+          }
+
+          if (item.name == "Add Project") {
+            if (!await ensureLoggedIn(context)) return;
+            if (!context.mounted) return;
+          }
+
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(content: Text("You pressed the ${item.name} button!")),
             );
           // Navigate to the appropriate screen
-          if (item.name == "Add Project") {
+          if (item.name == "View Projects") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ProjectListScreen(),
+              ),
+            );
+          } else if (item.name == "Add Project") {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ProjectFormPage()),

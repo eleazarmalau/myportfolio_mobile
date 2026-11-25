@@ -1,4 +1,4 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:myportofolio_mobile/widgets/project_card.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 
@@ -12,7 +12,11 @@ class MyHomePage extends StatelessWidget {
   final List<ItemHomepage> items = [
     ItemHomepage("View Projects", Icons.folder, const Color(0xFFD0E4F5)),
     ItemHomepage("Add Project", Icons.add_circle, const Color(0xFFFDDBDB)),
-    ItemHomepage("Add Education", Icons.school_outlined, const Color(0xFFF7CAC9)),
+    ItemHomepage(
+      "Add Education",
+      Icons.school_outlined,
+      const Color(0xFFF7CAC9),
+    ),
     ItemHomepage("Logout", Icons.logout, const Color(0xFFB3CEE5)),
   ];
 
